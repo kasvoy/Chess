@@ -22,7 +22,7 @@ int main (void)
 
     printAlgebraic(0x42);
 
-    printf("hello ther");
+    printf("hello there");
 
 }
 
