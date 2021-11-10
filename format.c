@@ -14,7 +14,7 @@ void printAlgebraic(unsigned char hex_coordinate)
     printf("%c%d", file, rank_index);
 }
 
-unsigned char toFormat(char square[5])
+unsigned char toFormat(char *square)
 {
     int file = tolower(square[0]) - 97;
     int rank = square[1] - 49;
@@ -22,68 +22,46 @@ unsigned char toFormat(char square[5])
     return rank * 16 + file;
 }
 
-char toSymbol(int id)
+
+int toId (char symbol)
 {
-    if (id == 1)
+    if (toPlay % 2 == 0)
     {
-        return 'P';
+        if (tolower(symbol) == 'p') return 1;
+        else if (tolower(symbol) == 'r') return 2;
+        else if (tolower(symbol) == 'n') return 3;
+        else if (tolower(symbol) == 'b') return 4;
+        else if (tolower(symbol) == 'q') return 5;
+        else if (tolower(symbol) == 'k') return 6;
     }
-
-    else if (id == 2)
-    {
-        return 'R';
-    }
-
-    else if (id == 3)
-    {
-        return 'N';
-    }
-
-    else if (id == 4)
-    {
-        return 'B';
-    }
-
-    else if (id == 5)
-    {
-        return 'Q';
-    }
-
-    else if (id == 6)
-    {
-        return 'K';
-    }
-
-    if (id == -1)
-    {
-        return 'p';
-    }
-
-    else if (id == -2)
-    {
-        return 'r';
-    }
-
-    else if (id == -3)
-    {
-        return 'n';
-    }
-
-    else if (id == -4)
-    {
-        return 'b';
-    }
-
-    else if (id == -5)
-    {
-        return 'q';
-    }
-
     else
     {
-        return 'k';
+        if (tolower(symbol) == 'p') return -1;
+        else if (tolower(symbol) == 'r') return -2;
+        else if (tolower(symbol) == 'n') return -3;
+        else if (tolower(symbol) == 'b') return -4;
+        else if (tolower(symbol) == 'q') return -5;
+        else if (tolower(symbol) == 'k') return -6;
     }
-    
+
+    return 0;
+}
+
+char toSymbol(int id)
+{
+    if (id == 1) return 'P';
+    else if (id == 2) return 'R';
+    else if (id == 3) return 'N';
+    else if (id == 4) return 'B';
+    else if (id == 5) return 'Q';
+    else if (id == 6) return 'K';
+    else if (id == -1) return 'p';
+    else if (id == -2) return 'r';
+    else if (id == -3) return 'n';
+    else if (id == -4) return 'b';
+    else if (id == -5) return 'q';
+    else return 'k';
+
 }
 void printState(void)
 {
@@ -100,6 +78,7 @@ void printState(void)
     }
 
     char board_gui[9][9];
+    board_gui[8][8] = ' ';
     
     for (int i = 0; i < 8; i++)
     {

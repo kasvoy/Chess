@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include "format.h"
 #include "pieces.h"
 #include "move.h"
@@ -19,6 +20,8 @@ int KnightMult[] = {-18, 18, -14, 14, -33, 33, -31, 31};
 int BishopMult[] = {-15, 15, -17, 17};
 int QueenMult[] = {-16, 16, -1, 1, -15, 15, -17, 17};
 
+struct node* moves;
+
 bool withinBoard(unsigned char square)
 {    
     if ((square & 0x88) != 0) 
@@ -29,85 +32,154 @@ bool withinBoard(unsigned char square)
     return true;
 }
 
-void printMovesOneDir(unsigned char square, int multiplier)
+//unloads previous list of legal moves
+void freeMoves(void)
 {
-    int n = 1;
-
-    unsigned char proxy = square;
-
-    while(true)
+    while(moves != NULL)
     {
-        square = proxy + n * multiplier;
-
-        if (withinBoard(square))
-        {
-            printAlgebraic(square);
-        }
-
-        else
-        {
-            break;
-        }
-        n++;
+        struct node *tmp = moves->next;
+        free(moves);
+        moves = tmp;
     }
 }
 
-void showLegalTargets(int piece_id, unsigned char square)
+void addMove(unsigned char square)
 {
-    if (piece_id == 0)
+    struct node *move = malloc(sizeof(struct node));
+    move->square = square;
+    move->next = moves;
+    moves = move;
+}
+
+void getLegalTargets(int piece_id, unsigned char square)
+{
+    
+    if (piece_id == 1)
     {
         square += 16;
         
         if (withinBoard(square))
         {
-            printAlgebraic(square);
-        }
-    }        
-
-    else if (piece_id == 1)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            printMovesOneDir(square, RookMult[i]);
+            freeMoves();
+            addMove(square);
         }
     }
 
-    else if (piece_id == 2)
+    if (piece_id == -1)
+    {
+        square -= 16;
+        
+        if (withinBoard(square))
+        {
+            freeMoves();
+            addMove(square);
+        }
+    }          
+
+    else if (piece_id == 2 || piece_id == -2)
+    {
+        
+        unsigned char proxy = square;
+        freeMoves();
+
+        for (int i = 0; i < 4; i++)
+        {
+            int n = 1;
+
+            while(true)
+            {
+                square = proxy + n * RookMult[i];
+
+                if (withinBoard(square))
+                {
+                    
+                    addMove(square);
+                }
+
+                else
+                {
+                    break;
+                }
+                n++;
+            }
+        }
+    }
+
+    else if (piece_id == 3 || piece_id == -3)
     {
         unsigned char proxy = square;
-
+        freeMoves();
         for (int i = 0; i < 8; i++)
         {
             square += KnightMult[i];
 
             if (withinBoard(square))
             {
-                printAlgebraic(square);
+                addMove(square);
             }
 
             square = proxy;
         }
     }
 
-    else if (piece_id == 3)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            printMovesOneDir(square, BishopMult[i]);
-        }
-    }
-
-    else if(piece_id == 4)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            printMovesOneDir(square, QueenMult[i]);
-        }
-    }
-
-    else if (piece_id == 5)
+    else if (piece_id == 4 || piece_id == -4)
     {
         unsigned char proxy = square;
+        freeMoves();
+
+        for (int i = 0; i < 4; i++)
+        {
+            int n = 1;
+
+            while(true)
+            {
+                square = proxy + n * BishopMult[i];
+
+                if (withinBoard(square))
+                {
+                    addMove(square);
+                }
+
+                else
+                {
+                    break;
+                }
+                n++;
+            }
+        }
+    }
+
+    else if(piece_id == 5 || piece_id == -5)
+    {
+        unsigned char proxy = square;
+        freeMoves();
+
+        for (int i = 0; i < 8; i++)
+        {
+            int n = 1;
+
+            while(true)
+            {
+                square = proxy + n * QueenMult[i];
+
+                if (withinBoard(square))
+                {
+                    addMove(square);
+                }
+
+                else
+                {
+                    break;
+                }
+                n++;
+            }
+        }
+    }
+
+    else if (piece_id == 6 || piece_id == -6)
+    {
+        unsigned char proxy = square;
+        freeMoves();
 
         for (int i = 0; i < 8; i++)
         {
@@ -115,7 +187,7 @@ void showLegalTargets(int piece_id, unsigned char square)
 
             if (withinBoard(square))
             {
-                printAlgebraic(square);
+                addMove(square);
             }
 
             square = proxy;
@@ -127,8 +199,22 @@ int main (void)
 {
     setPieces();
     setBoard();
-    //generateMove();
+    
     printState();
+
+    char symbol;
+    char target_square[2];
+    printf("symbol: ");
+    scanf("%c", &symbol);
+    printf("target square (alg): ");
+    scanf("%s", target_square);
+
+
+    
+    generateMove(symbol, toFormat(target_square));
+    printState();
+
+
 }
 
 
