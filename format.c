@@ -67,6 +67,10 @@ void printState(void)
 {
     //int count = 0;
 
+    //erases screen and moves cursor to home position
+    printf("\x1B[2J");
+    printf("\x1B[H");
+
     if (toPlay % 2 == 0)
     {
         printf("White to play\n");
@@ -105,9 +109,10 @@ void printState(void)
         }
     }
 
-
+    
     for (int i = 0; i < 8; i++)
     {
+        
         printf("+---+---+---+---+---+---+---+---+\n|");
 
         for (int j = 0; j < 9; j++)

@@ -9,6 +9,7 @@
 
 int toPlay = 0;
 
+
 void changeState(struct piece piece_list[16], unsigned char target_square, int piece_id)
 {
     for (int i = 0; i < 16; i++)
@@ -30,18 +31,25 @@ void changeState(struct piece piece_list[16], unsigned char target_square, int p
      }
 }
 
-void generateMove(char piece_symbol, unsigned char target_square)
+void generateMove(char *move)
 {
-    int id = toId(piece_symbol);
+
+    int id = toId(move[0]);
+
+    char target_square[2];
+
+    target_square[0] = move[1];
+    target_square[1] = move[2];
     
- 
+    
+
     if (toPlay % 2 == 0)
     {
-        changeState(white_pieces, target_square, id);
+        changeState(white_pieces, toFormat(target_square), id);
     }
     else
     {
-        changeState(black_pieces, target_square, id);
+        changeState(black_pieces, toFormat(target_square), id);
     }
 
     toPlay++;

@@ -51,9 +51,23 @@ void addMove(unsigned char square)
     moves = move;
 }
 
+bool friendlyOnSquare (struct piece piece_list[16], unsigned char square)
+{
+    for (int i = 0; i < 16; i++)
+    {
+        if (piece_list[i].location == square)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void getLegalTargets(int piece_id, unsigned char square)
 {
-    
+    int move_count = 0;
+
     if (piece_id == 1)
     {
         square += 16;
@@ -62,6 +76,7 @@ void getLegalTargets(int piece_id, unsigned char square)
         {
             freeMoves();
             addMove(square);
+            move_count++;
         }
     }
 
@@ -73,6 +88,7 @@ void getLegalTargets(int piece_id, unsigned char square)
         {
             freeMoves();
             addMove(square);
+            move_count++;
         }
     }          
 
@@ -92,8 +108,31 @@ void getLegalTargets(int piece_id, unsigned char square)
 
                 if (withinBoard(square))
                 {
+                    if (piece_id == -2)
+                    {
+                        if (!friendlyOnSquare(black_pieces, square))
+                        {
+                            addMove(square);
+                            move_count++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                     
-                    addMove(square);
+                    if (piece_id == 2)
+                    {
+                        if(!friendlyOnSquare(white_pieces, square))
+                        {
+                            addMove(square);
+                            move_count++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
 
                 else
@@ -115,9 +154,24 @@ void getLegalTargets(int piece_id, unsigned char square)
 
             if (withinBoard(square))
             {
-                addMove(square);
+                if (piece_id == -3)
+                {
+                    if (!friendlyOnSquare(black_pieces, square))
+                    {
+                        addMove(square);
+                        move_count++;
+                    }
+                }
+                        
+                if (piece_id == 3)
+                {
+                    if(!friendlyOnSquare(white_pieces, square))
+                    {
+                        addMove(square);
+                        move_count++;
+                    }
+                }
             }
-
             square = proxy;
         }
     }
@@ -137,7 +191,31 @@ void getLegalTargets(int piece_id, unsigned char square)
 
                 if (withinBoard(square))
                 {
-                    addMove(square);
+                    if (piece_id == -4)
+                    {
+                        if (!friendlyOnSquare(black_pieces, square))
+                        {
+                            addMove(square);
+                            move_count++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    
+                    if (piece_id == 4)
+                    {
+                        if(!friendlyOnSquare(white_pieces, square))
+                        {
+                            addMove(square);
+                            move_count++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
 
                 else
@@ -164,7 +242,29 @@ void getLegalTargets(int piece_id, unsigned char square)
 
                 if (withinBoard(square))
                 {
-                    addMove(square);
+                    if (piece_id == -5)
+                    {
+                        if (!friendlyOnSquare(black_pieces, square))
+                        {
+                            addMove(square);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    
+                    if (piece_id == 5)
+                    {
+                        if(!friendlyOnSquare(white_pieces, square))
+                        {
+                            addMove(square);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
 
                 else
@@ -183,13 +283,27 @@ void getLegalTargets(int piece_id, unsigned char square)
 
         for (int i = 0; i < 8; i++)
         {
+            //king and queen have the same multiplier
             square += QueenMult[i];
 
             if (withinBoard(square))
             {
-                addMove(square);
+                if (piece_id == -6)
+                {
+                    if (!friendlyOnSquare(black_pieces, square))
+                    {
+                        addMove(square);
+                    }
+                }
+                        
+                if (piece_id == 6)
+                {
+                    if(!friendlyOnSquare(white_pieces, square))
+                    {
+                        addMove(square);
+                    }
+                }
             }
-
             square = proxy;
         }
     }
@@ -199,20 +313,23 @@ int main (void)
 {
     setPieces();
     setBoard();
-    
     printState();
-
-    char symbol;
-    char target_square[2];
-    printf("symbol: ");
-    scanf("%c", &symbol);
-    printf("target square (alg): ");
-    scanf("%s", target_square);
-
-
     
-    generateMove(symbol, toFormat(target_square));
-    printState();
+
+    while(true)
+    {
+        char *move = malloc(sizeof(char) * 10);
+
+        printf("Move: ");
+        scanf("%s", move);
+        generateMove(move);
+
+        printState();
+        free(move);
+    }
+    
+
+
 
 
 }
