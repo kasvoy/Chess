@@ -51,7 +51,7 @@ void addMove(unsigned char square)
     moves = move;
 }
 
-bool friendlyOnSquare (struct piece piece_list[16], unsigned char square)
+bool pieceOnSquare (struct piece piece_list[16], unsigned char square)
 {
     for (int i = 0; i < 16; i++)
     {
@@ -64,13 +64,24 @@ bool friendlyOnSquare (struct piece piece_list[16], unsigned char square)
     return false;
 }
 
-void getLegalTargets(int piece_id, unsigned char square)
+int getLegalTargets(int piece_id, unsigned char square)
 {
     int move_count = 0;
 
     if (piece_id == 1)
     {
-        square += 16;
+        unsigned char proxy = square;
+        freeMoves();
+
+        if (square == 16 || square == 17|| square == 18|| square == 19|| square == 20
+        ||square == 21 || square == 22|| square == 23)
+        {
+            square = proxy + 32;
+            addMove(square);
+            move_count++;
+        }
+        
+        square = proxy + 16;
         
         if (withinBoard(square))
         {
@@ -82,11 +93,11 @@ void getLegalTargets(int piece_id, unsigned char square)
 
     if (piece_id == -1)
     {
+        freeMoves();
         square -= 16;
         
         if (withinBoard(square))
-        {
-            freeMoves();
+        {      
             addMove(square);
             move_count++;
         }
@@ -110,10 +121,21 @@ void getLegalTargets(int piece_id, unsigned char square)
                 {
                     if (piece_id == -2)
                     {
-                        if (!friendlyOnSquare(black_pieces, square))
+                        if (!pieceOnSquare(black_pieces, square))
                         {
-                            addMove(square);
-                            move_count++;
+                            if (pieceOnSquare(white_pieces, square))
+                            {
+                                addMove(square);
+                                move_count++;
+                        
+                                break;
+                            }
+                            else
+                            {   
+                                addMove(square);
+                                move_count++;
+                            }
+                            
                         }
                         else
                         {
@@ -123,8 +145,15 @@ void getLegalTargets(int piece_id, unsigned char square)
                     
                     if (piece_id == 2)
                     {
-                        if(!friendlyOnSquare(white_pieces, square))
+                        if(!pieceOnSquare(white_pieces, square))
                         {
+                            if (pieceOnSquare(black_pieces, square))
+                            {
+                                addMove(square);
+                                move_count++;
+                                break;
+                            }
+
                             addMove(square);
                             move_count++;
                         }
@@ -156,7 +185,7 @@ void getLegalTargets(int piece_id, unsigned char square)
             {
                 if (piece_id == -3)
                 {
-                    if (!friendlyOnSquare(black_pieces, square))
+                    if (!pieceOnSquare(black_pieces, square))
                     {
                         addMove(square);
                         move_count++;
@@ -165,7 +194,7 @@ void getLegalTargets(int piece_id, unsigned char square)
                         
                 if (piece_id == 3)
                 {
-                    if(!friendlyOnSquare(white_pieces, square))
+                    if(!pieceOnSquare(white_pieces, square))
                     {
                         addMove(square);
                         move_count++;
@@ -193,8 +222,14 @@ void getLegalTargets(int piece_id, unsigned char square)
                 {
                     if (piece_id == -4)
                     {
-                        if (!friendlyOnSquare(black_pieces, square))
+                        if (!pieceOnSquare(black_pieces, square))
                         {
+                            if (pieceOnSquare(white_pieces, square))
+                            {
+                                addMove(square);
+                                move_count++;
+                                break;
+                            }
                             addMove(square);
                             move_count++;
                         }
@@ -206,8 +241,14 @@ void getLegalTargets(int piece_id, unsigned char square)
                     
                     if (piece_id == 4)
                     {
-                        if(!friendlyOnSquare(white_pieces, square))
+                        if(!pieceOnSquare(white_pieces, square))
                         {
+                            if (pieceOnSquare(black_pieces, square))
+                            {
+                                addMove(square);
+                                move_count++;
+                                break;
+                            }
                             addMove(square);
                             move_count++;
                         }
@@ -244,9 +285,16 @@ void getLegalTargets(int piece_id, unsigned char square)
                 {
                     if (piece_id == -5)
                     {
-                        if (!friendlyOnSquare(black_pieces, square))
+                        if (!pieceOnSquare(black_pieces, square))
                         {
+                            if (pieceOnSquare(white_pieces, square))
+                            {
+                                addMove(square);
+                                move_count++;
+                                break;
+                            }
                             addMove(square);
+                            move_count++;
                         }
                         else
                         {
@@ -256,9 +304,16 @@ void getLegalTargets(int piece_id, unsigned char square)
                     
                     if (piece_id == 5)
                     {
-                        if(!friendlyOnSquare(white_pieces, square))
+                        if (!pieceOnSquare(white_pieces, square))
                         {
+                            if (pieceOnSquare(black_pieces, square))
+                            {
+                                addMove(square);
+                                move_count++;
+                                break;
+                            }
                             addMove(square);
+                            move_count++;
                         }
                         else
                         {
@@ -290,7 +345,7 @@ void getLegalTargets(int piece_id, unsigned char square)
             {
                 if (piece_id == -6)
                 {
-                    if (!friendlyOnSquare(black_pieces, square))
+                    if (!pieceOnSquare(black_pieces, square))
                     {
                         addMove(square);
                     }
@@ -298,7 +353,7 @@ void getLegalTargets(int piece_id, unsigned char square)
                         
                 if (piece_id == 6)
                 {
-                    if(!friendlyOnSquare(white_pieces, square))
+                    if(!pieceOnSquare(white_pieces, square))
                     {
                         addMove(square);
                     }
@@ -307,6 +362,8 @@ void getLegalTargets(int piece_id, unsigned char square)
             square = proxy;
         }
     }
+
+    return move_count;
 }
 
 int main (void)
@@ -322,7 +379,12 @@ int main (void)
 
         printf("Move: ");
         scanf("%s", move);
-        generateMove(move);
+        
+        //printf(isLegal(move) ? "true":"false");
+        if (isLegal(move))
+        {
+            generateMove(move);
+        }
 
         printState();
         free(move);
