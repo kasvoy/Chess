@@ -1,10 +1,176 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include "globvar.h"
 #include "format.h"
 #include "pieces.h"
+
+
+bool whiteCastleKingside (char *fen)
+{
+    int l = strlen(fen);
+    int index = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen [i] == 32)
+        {
+            index = i + 3;
+            break;
+        }   
+    }
+
+    for (int i = index; i < index + 4; i++)
+    {
+        if (fen[i] == 'K') return true;
+    }
+
+    return false;
+
+}
+
+bool whiteCastleQueenside (char *fen)
+{
+    int l = strlen(fen);
+    int index = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen [i] == 32)
+        {
+            index = i + 3;
+            break;
+        }   
+    }
+
+    for (int i = index; i < index + 4; i++)
+    {
+        if (fen[i] == 'Q') return true;
+    }
+
+    return false;
+}
+
+bool blackCastleKingside (char *fen)
+{
+    int l = strlen(fen);
+    int index = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen [i] == 32)
+        {
+            index = i + 3;
+            break;
+        }   
+    }
+
+    for (int i = index; i < index + 4; i++)
+    {
+        if (fen[i] == 'k') return true;
+    }
+
+    return false;
+}
+
+bool blackCastleQueenside (char *fen)
+{
+    int l = strlen(fen);
+    int index = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen [i] == 32)
+        {
+            index = i + 3;
+            break;
+        }   
+    }
+
+    for (int i = index; i < index + 4; i++)
+    {
+        if (fen[i] == 'q') return true;
+    }
+
+    return false;
+}
+
+unsigned char enPassantTargetSquare (char *fen)
+{
+    int l = strlen(fen);
+
+    int index = 0;
+    int count = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen[i] == 32)
+        {
+            count++;
+            if (count == 3) 
+            {
+                index = i + 1;
+                break;
+            }
+        }
+    }
+
+    char target_square[2];
+
+    target_square[0] = fen[index];
+    target_square[1] = fen[index + 1]; 
+ 
+    return toFormat(target_square);
+
+}
+
+int halfMoveClock (char *fen)
+{
+    int l = strlen(fen);
+
+    int index = 0;
+    int count = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen[i] == 32)
+        {
+            count++;
+            if (count == 4)
+            {
+                index = i + 1;
+                break;
+            }
+        }
+    } 
+
+    return (int)fen[index] - 48;
+}
+
+int fullMoveNumber (char *fen)
+{
+    int l = strlen(fen);
+
+    int index = 0;
+    int count = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        if (fen[i] == 32)
+        {
+            count++;
+            if (count == 5) 
+            {
+                index = i + 1;
+                break;
+            }
+        }
+    } 
+
+    return (int)fen[index] - 48;
+}
 
 
 void setPositionFEN(char *fen)
@@ -17,7 +183,6 @@ void setPositionFEN(char *fen)
         white_pieces[i].location = 15;
         black_pieces[i].location = 15;
     }
-
 
     int l = strlen(fen);
 
@@ -32,7 +197,15 @@ void setPositionFEN(char *fen)
 
     for (int i = 0; i < l; i++)
     {
-        if (fen[i] == 32) break;
+        if (fen[i] == 32)
+        {
+            i++;
+            if (fen[i] == 'w') toPlay = 0;
+            else toPlay = 1;
+            
+            break;
+        }
+
         if (fen[i] == 47)
         {
             i++;
@@ -64,5 +237,8 @@ void setPositionFEN(char *fen)
             k += offset;
         }
     }
+
+    printf("half: %d\n", halfMoveClock(fen));
+    printf("full: %d\n", fullMoveNumber(fen));
     setBoard();
 }
