@@ -2,10 +2,12 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include <string.h>
 #include "format.h"
 #include "pieces.h"
 #include "move.h"
 #include "globvar.h"
+#include "fen.h"
 
 
 //1 - White pawn    // -1 - Black pawn
@@ -68,40 +70,91 @@ int getLegalTargets(int piece_id, unsigned char square)
 {
     int move_count = 0;
 
-    if (piece_id == 1)
+    if (piece_id == 1 || piece_id == -1)
     {
         unsigned char proxy = square;
         freeMoves();
 
-        if (square == 16 || square == 17|| square == 18|| square == 19|| square == 20
-        ||square == 21 || square == 22|| square == 23)
+        if (piece_id == 1)
         {
-            square = proxy + 32;
-            addMove(square);
-            move_count++;
-        }
+            if (square == 16 || square == 17|| square == 18|| square == 19|| square == 20
+            ||square == 21 || square == 22|| square == 23)
+            {
+                square = proxy + 32;
+                if (board[square] == NULL)
+                {
+                    addMove(square);
+                    move_count++;
+                }
+            }
         
-        square = proxy + 16;
+            square = proxy + 16;
         
-        if (withinBoard(square))
-        {
-            freeMoves();
-            addMove(square);
-            move_count++;
-        }
-    }
+            if (withinBoard(square))
+            {
+                if(board[square] == NULL)
+                {
+                    addMove(square);
+                    move_count++;
+                }     
+            }
 
-    if (piece_id == -1)
-    {
-        freeMoves();
-        square -= 16;
-        
-        if (withinBoard(square))
-        {      
-            addMove(square);
-            move_count++;
+            if (pieceOnSquare(black_pieces, (proxy + 15)))
+            {
+                square = proxy + 15;
+                addMove(square);
+                move_count++;
+            }
+
+            if (pieceOnSquare(black_pieces, (proxy + 17)))
+            {
+                square = proxy + 17;
+                addMove(square);
+                move_count++;
+            }
         }
-    }          
+
+        if (piece_id == -1)
+        {
+            if (square == 96 || square == 97|| square == 98|| square == 99|| square == 100
+            ||square == 101 || square == 102|| square == 103)
+            {
+                square = proxy - 32;
+                
+                if(board[square] == NULL)
+                {
+                    addMove(square);
+                    move_count++;
+                }
+            }
+        
+            square = proxy - 16;
+        
+            if (withinBoard(square))
+            {
+                if (board[square] == NULL)
+                {
+                    addMove(square);
+                    move_count++; 
+                }
+            }
+
+            if (pieceOnSquare(white_pieces, (proxy - 15)))
+            {
+                square = proxy - 15;
+                addMove(square);
+                move_count++;
+            }
+
+            if (pieceOnSquare(white_pieces, (proxy - 17)))
+            {
+                square = proxy - 17;
+                addMove(square);
+                move_count++;
+            }
+        }
+
+    }
 
     else if (piece_id == 2 || piece_id == -2)
     {
@@ -373,6 +426,18 @@ int main (void)
     printState();
     
 
+    char *fen = malloc(sizeof(char)*100);
+
+    printf("FEN (enter 0 for starting position): ");
+    scanf("%[^\n]", fen);
+
+    if (strcmp(fen, "0") != 0)
+    {
+        setPositionFEN(fen);
+        printState();
+        free(fen);
+    }
+
     while(true)
     {
         char *move = malloc(sizeof(char) * 10);
@@ -380,7 +445,6 @@ int main (void)
         printf("Move: ");
         scanf("%s", move);
         
-        //printf(isLegal(move) ? "true":"false");
         if (isLegal(move))
         {
             generateMove(move);
@@ -389,11 +453,7 @@ int main (void)
         printState();
         free(move);
     }
-    
-
 
 
 
 }
-
-

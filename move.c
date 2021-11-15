@@ -51,8 +51,6 @@ bool isLegal(char *move)
 }
 
 
-
-
 //update captured piece location to out of board
 void updatePieceList(unsigned char square)
 {   
@@ -83,6 +81,8 @@ void changeState(struct piece piece_list[16], unsigned char target_square, int p
 
             for (struct node *tmp = moves; tmp != NULL; tmp = tmp->next)
             {
+                // printAlgebraic(tmp->square);
+                // printf("\n");
                 if (tmp->square == target_square)
                 {
                     board[piece_list[i].location] = NULL;

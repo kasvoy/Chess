@@ -47,6 +47,24 @@ int toId (char symbol)
     return 0;
 }
 
+int caseId (char symbol)
+{
+    if (symbol == 'P') return 1;
+    else if (symbol == 'R') return 2;
+    else if (symbol == 'N') return 3;
+    else if (symbol == 'B') return 4;
+    else if (symbol == 'Q') return 5;
+    else if (symbol == 'K') return 6;
+    else if (symbol == 'p') return -1;
+    else if (symbol == 'r') return -2;
+    else if (symbol == 'n') return -3;
+    else if (symbol == 'b') return -4;
+    else if (symbol == 'q') return -5;
+    else if (symbol == 'k') return -6;
+
+    return 0;
+}
+
 char toSymbol(int id)
 {
     if (id == 1) return 'P';
