@@ -132,6 +132,7 @@ int halfMoveClock (char *fen)
 
     int index = 0;
     int count = 0;
+    int a = 0;
 
     for (int i = 0; i < l; i++)
     {
@@ -144,9 +145,17 @@ int halfMoveClock (char *fen)
                 break;
             }
         }
-    } 
+    }
 
-    return (int)fen[index] - 48;
+    char hmclock[4];
+
+    for (int i = index; fen[i] != 32; i++)
+    {
+        hmclock[a] = fen[i];
+        a++;
+    }
+
+    return atoi(hmclock);
 }
 
 int fullMoveNumber (char *fen)
@@ -168,8 +177,16 @@ int fullMoveNumber (char *fen)
             }
         }
     } 
+    
+    char fmnumber[4]; 
+    int a = 0;
+    for (int i = index; i < l; i++)
+    {
+        fmnumber[a] = fen[i];
+        a++;
+    }
 
-    return (int)fen[index] - 48;
+    return atoi(fmnumber);
 }
 
 
@@ -186,8 +203,9 @@ void setPositionFEN(char *fen)
 
     int l = strlen(fen);
 
-    //a8
+    //starting from a8
     int init_location = 112;
+
     int location = init_location;
     int n = 0;
     int k = 0;
@@ -237,8 +255,5 @@ void setPositionFEN(char *fen)
             k += offset;
         }
     }
-
-    printf("half: %d\n", halfMoveClock(fen));
-    printf("full: %d\n", fullMoveNumber(fen));
     setBoard();
 }

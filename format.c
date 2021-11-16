@@ -11,7 +11,7 @@ void printAlgebraic(unsigned char hex_coordinate)
 
     char file = file_index + 97;
 
-    printf("%c%d", file, rank_index);
+    printf("%c%d\n", file, rank_index);
 }
 
 unsigned char toFormat(char *square)
@@ -134,18 +134,15 @@ void printState(void)
         printf("+---+---+---+---+---+---+---+---+\n|");
 
         for (int j = 0; j < 9; j++)
-        {
-            
+        {           
             if (!isdigit(board_gui[i][j]))
-            {
-                
+            {               
                 printf(" %c |",board_gui[i][j]);
             } 
             else
             {
                 printf(" %c",board_gui[i][j]);
-            }
-            
+            }         
         }   
         printf("\n");
     }
